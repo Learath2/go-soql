@@ -1096,6 +1096,22 @@ var _ = Describe("Marshaller", func() {
 						Expect(str).To(Equal("Id,Name__c,NonNestedStruct__r.Name,NonNestedStruct__r.SomeValue__c"))
 					})
 				})
+
+				Context("when nested struct with soql fields is selected opaquely", func() {
+					It("returns properly resolved list of field names without breaking up dontbreak", func() {
+						str, err := MarshalSelectClause(NestedStructWithOpaqueSoql{}, "")
+						Expect(err).ToNot(HaveOccurred())
+						Expect(str).To(Equal("Id,Name__c,DontBreak__c"))
+					})
+				})
+
+				Context("when nested struct with no soql fields is selected opaquely", func() {
+					It("returns properly resolved list of field names without breaking up nobreak", func() {
+						str, err := MarshalSelectClause(NestedStructWithOpaqueNonSoql{}, "")
+						Expect(err).ToNot(HaveOccurred())
+						Expect(str).To(Equal("Id,Name__c,DontBreak__c"))
+					})
+				})
 			})
 
 			Context("when relationship name is passed", func() {

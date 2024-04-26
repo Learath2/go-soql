@@ -515,7 +515,8 @@ func mapSelectColumns(mappings map[string]string, parent string, gusParent strin
 			continue
 		}
 		// skip all fields that are not tagged as selectColumn
-		if getClauseKey(tag) != SelectColumn {
+		clauseKey := getClauseKey(tag)
+		if clauseKey != SelectColumn && clauseKey != SelectOpaque {
 			continue
 		}
 

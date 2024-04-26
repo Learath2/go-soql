@@ -1026,6 +1026,17 @@ var _ = Describe("Marshaller", func() {
 					Expect(clause).To(Equal("Major_OS_Version__c DESC,Num_of_CPU_Cores__c ASC,Physical_CPU_Count__c DESC,Last_Restart__c ASC"))
 				})
 			})
+
+			Context("when an Order slice referring to a SelectOpaque field is passed", func() {
+				It("returns a valid order clause", func() {
+					col1 := Order{Field: "OpaqueField", IsDesc: true}
+					clause, err := MarshalOrderByClause([]Order{col1}, struct {
+						OpaqueField OpaqueStructSoql `soql:"selectOpaque,fieldName=Role__c"`
+					}{})
+					Expect(err).ToNot(HaveOccurred())
+					Expect(clause).To(Equal("Role__c DESC"))
+				})
+			})
 		})
 
 		Context("when invalid order by is passed as argument", func() {

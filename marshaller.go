@@ -85,10 +85,12 @@ const (
 	TableName = "tableName"
 	// SelectColumn is the tag to be used for selecting a column in select clause
 	SelectColumn = "selectColumn"
-	// SelectSingle is the tag to be used for selecting a column in select clause without breaking a struct
+	// SelectOpaque is the tag to be used for selecting a column in select clause without breaking a struct
 	SelectOpaque = "selectOpaque"
 	// SelectChild is the tag to be used when selecting from child tables
 	SelectChild = "selectChild"
+	// SelectEmbed
+	SelectEmbed = "selectEmbed"
 	// FieldName is the parameter to be used to specify the name of the field in underlying SOQL object
 	FieldName = "fieldName"
 	// WhereClause is the tag to be used when marking the struct to be considered for where clause
@@ -949,13 +951,15 @@ func MarshalSelectClause(v interface{}, relationShipName string) (string, error)
 			}
 			clauseKey := getClauseKey(clauseTag)
 			isChildRelation := false
+			isEmbedded := false
 			breakStructs := true
 			switch clauseKey {
 			case SelectColumn:
 				isChildRelation = false
 			case SelectOpaque:
-				isChildRelation = false
 				breakStructs = false
+			case SelectEmbed:
+				isEmbedded = true
 			case SelectChild:
 				isChildRelation = true
 			default:
@@ -974,7 +978,11 @@ func MarshalSelectClause(v interface{}, relationShipName string) (string, error)
 			} else {
 				if field.Type.Kind() == reflect.Struct && breakStructs {
 					v := reflect.New(field.Type)
-					subStr, err := MarshalSelectClause(v.Elem().Interface(), prefix+fieldName)
+					newRelationshipName := prefix+fieldName
+					if isEmbedded {
+						newRelationshipName = ""
+					}
+					subStr, err := MarshalSelectClause(v.Elem().Interface(), newRelationshipName)
 					if err != nil {
 						return "", err
 					}

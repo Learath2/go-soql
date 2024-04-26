@@ -78,6 +78,12 @@ type NestedStructWithOpaqueNonSoql struct {
 	DontBreak OpaqueStructNonSoql `soql:"selectOpaque,fieldName=DontBreak__c"`
 }
 
+type NestedStructEmbedded struct {
+	OpaqueStructSoql `soql:"selectEmbed"`
+	ID               string `soql:"selectColumn,fieldName=Id"`
+	Name             string `soql:"selectColumn,fieldName=Name__c"`
+}
+
 type TestChildStruct struct {
 	SelectClause ChildStruct        `soql:"selectClause,tableName=SM_Application_Versions__c"`
 	WhereClause  ChildQueryCriteria `soql:"whereClause"`

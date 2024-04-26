@@ -1112,6 +1112,14 @@ var _ = Describe("Marshaller", func() {
 						Expect(str).To(Equal("Id,Name__c,DontBreak__c"))
 					})
 				})
+
+				Context("when there is an embedded nested struct", func() {
+					It("returns fields of embedded struct as own", func() {
+						str, err := MarshalSelectClause(NestedStructEmbedded{}, "")
+						Expect(err).ToNot(HaveOccurred())
+						Expect(str).To(Equal("Role,Id,Name__c"))
+					})
+				})
 			})
 
 			Context("when relationship name is passed", func() {
